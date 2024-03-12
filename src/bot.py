@@ -22,6 +22,7 @@ def menu_message(message:types.Message):
     )
     bot.register_next_step_handler(message, subject_choice)
 
+print("купите попугая")
 
 def subject_choice(message:types.Message):
     choice = message.text.lower()
