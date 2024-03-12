@@ -22,25 +22,39 @@ def menu_message(message:types.Message):
     )
     bot.register_next_step_handler(message, subject_choice)
 
-print("купите попугая")
-
 def subject_choice(message:types.Message):
     choice = message.text.lower()
-    if choice in settings.SUBJECT_LIST:
+    if  choice == "алгебра":
         bot.send_message(
             chat_id = message.chat.id,
-            text = messages.MESSAGE_CHOICE.format(choice=choice),
-            reply_markup = markups.get_empty_markup()
+            text = "Выберите тему по алгебре:",
+            reply_markup = markups.get_topics_markup(settings.ALGEBRA_TOPICS)
         )
-        bot.register_next_step_handler(message, search, choice)
+        bot.register_next_step_handler(message, xxx)
+    elif choice == "геометрия":
+        bot.send_message(
+            chat_id = message.chat.id,
+            text = "Выберите тему по геометрия:",
+            reply_markup = markups.get_topics_markup(settings.GEOMETRY_TOPICS)
+        )
+        bot.register_next_step_handler(message, xxx)
+    elif choice == "физика":
+        bot.send_message(
+            chat_id = message.chat.id,
+            text = "Выберите тему по физике:",
+            reply_markup = markups.get_topics_markup(settings.PHYSICS_TOPICS)
+        ) 
+        bot.register_next_step_handler(message, xxx)
     else:
         bot.send_message(
-            chat_id=message.chat.id,
-            text=messages.MESSAGE_CHOICE_SUBJECT_ERROR,
-            reply_markup=markups.get_menu_markup(need_cancel=True)
+            chat_id = message.chat.id,
+            text = messages.MESSAGE_CHOICE_SUBJECT_ERROR,
+            reply_markup = markups.get_menu_markup(need_cancel = True)
         )
         bot.register_next_step_handler(message, subject_choice)
 
+def xxx(message):
+    ...
 
 def search(message:types.Message, choice):
     search_str = message.text.lower()
