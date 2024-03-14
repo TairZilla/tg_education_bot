@@ -1,5 +1,6 @@
 import os
 from dotenv import load_dotenv
+import learning
 
 #Извлечение переменных окружения
 dotenv_path = os.path.join(os.path.dirname(__file__),'..', '.env')
@@ -35,6 +36,12 @@ GEOMETRY_TOPICS = [
     "Признаки прямоугольного тругольника",
     "Признаки равенства треугольников"
 ]
+
+MENAGE_DICT = {
+    "алгебра": learning.ALGEBRA_DATA,
+    "геометрия": learning.GEOMETRY_DATA,
+    "физика": learning.PHYSICS_DATA
+}
 
 #Здесь можно изменить надпись на кнопке отмены
 CANCEL_WORD = 'отмена'

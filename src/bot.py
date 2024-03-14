@@ -13,6 +13,13 @@ def start_message(message:types.Message):
     )
     db.insert_user(message.from_user.username, message.from_user.id)
 
+@bot.message_handler(commands = ['info'])
+def info_message(message:types.Message):
+    bot.send_message(
+        chat_id = message.chat.id,
+        text = messages.MESSAGE_INFO
+
+    )
 @bot.message_handler(commands=['menu'])
 def menu_message(message:types.Message):
     bot.send_message(
@@ -23,6 +30,13 @@ def menu_message(message:types.Message):
     bot.register_next_step_handler(message, subject_choice)
 
 def subject_choice(message:types.Message):
+    if message.text == "/cancel":
+        bot.send_message(
+            chat_id = message.chat.id,
+            text = messages.MESSAGE_CANCEL,
+            reply_markup = markups.get_empty_markup()
+        )
+        return
     choice = message.text.lower()
     if  choice == "алгебра":
         bot.send_message(
@@ -30,21 +44,21 @@ def subject_choice(message:types.Message):
             text = "Выберите тему по алгебре:",
             reply_markup = markups.get_topics_markup(settings.ALGEBRA_TOPICS)
         )
-        bot.register_next_step_handler(message, xxx)
+        bot.register_next_step_handler(message, topic_choice, choice)
     elif choice == "геометрия":
         bot.send_message(
             chat_id = message.chat.id,
             text = "Выберите тему по геометрия:",
             reply_markup = markups.get_topics_markup(settings.GEOMETRY_TOPICS)
         )
-        bot.register_next_step_handler(message, xxx)
+        bot.register_next_step_handler(message, topic_choice, choice)
     elif choice == "физика":
         bot.send_message(
             chat_id = message.chat.id,
             text = "Выберите тему по физике:",
             reply_markup = markups.get_topics_markup(settings.PHYSICS_TOPICS)
         ) 
-        bot.register_next_step_handler(message, xxx)
+        bot.register_next_step_handler(message, topic_choice, choice)
     else:
         bot.send_message(
             chat_id = message.chat.id,
@@ -53,24 +67,64 @@ def subject_choice(message:types.Message):
         )
         bot.register_next_step_handler(message, subject_choice)
 
-def xxx(message):
-    ...
-
-def search(message:types.Message, choice):
-    search_str = message.text.lower()
-
-    if search_str == settings.CANCEL_WORD:
-        bot.send_message(message.chat.id, text=messages.MESSAGE_CANCEL, reply_markup=markups.get_empty_markup())
+def topic_choice(message: types.Message, choice: str):
+    if message.text == "/cancel":
+        bot.send_message(
+            chat_id = message.chat.id,
+            text = messages.MESSAGE_CANCEL,
+            reply_markup = markups.get_empty_markup()
+        )
         return
+    topic = message.text.lower().capitalize()
+    bot.send_message(
+        message.chat.id,
+        text = messages.MESSAGE_CHOICE.format(
+            choice = choice.lower().capitalize(),
+            topic = topic.lower().capitalize()
+        ),
+        reply_markup = markups.get_empty_markup()
+    )
+    bot.register_next_step_handler(message, search, choice, topic)
+
+def search(message:types.Message, choice, topic):
+    if message.text == "/cancel":
+        bot.send_message(
+            chat_id = message.chat.id,
+            text = messages.MESSAGE_CANCEL,
+            reply_markup = markups.get_empty_markup()
+        )
+        return
+
+    topic_choice_str = message.text.lower()
+    
     for symbol in settings.SPECIAL_SYMBOLS:
-        search_str = search_str.replace(symbol,'')
+        topic_choice_str = topic_choice_str.replace(symbol, "")
 
-    search_str = search_str.split(" ")
-    response = handler.search_in_json(*search_str)
+    topic_choice_str = topic_choice_str.split(" ")
+    if topic in settings.MENAGE_DICT[choice].keys() and len(topic_choice_str) >= 2 and choice in settings.MENAGE_DICT.keys():
+        response = handler.find_in_dict(
+            border = len(topic_choice_str),
+            keywords = topic_choice_str,
+            data = settings.MENAGE_DICT[choice][topic]
+        )
+        if response:
+            bot.send_message(
+                message.chat.id,
+                text = messages.MESSAGE_200,
+                reply_markup = markups.get_empty_markup()
+            )
+            for item in response:
+                data = settings.MENAGE_DICT[choice][topic]
+                for part_path in item.split("|"):
+                    data = data.get(part_path)
+                to_mes = data
 
-    bot.send_message(message.chat.id, text='\n'.join(response), reply_markup=markups.get_cancel_markup())
+                bot.send_message(
+                    message.chat.id,
+                    text = to_mes,
+                    reply_markup = markups.get_empty_markup()
+                )
 
-    bot.register_next_step_handler(message, search, choice)
 
 if __name__ == "__main__":
         bot.infinity_polling()
