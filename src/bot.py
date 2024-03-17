@@ -11,7 +11,7 @@ def start_message(message:types.Message):
         text=messages.MESSAGE_HELLO,
     )
     db.insert_user(message.from_user.username, message.from_user.id)
-
+    
 @bot.message_handler(commands=['1001'])
 def creepy_message(message:types.Message):
     bot.send_message(
@@ -117,7 +117,6 @@ def topic_choice(message:types.Message, choice:str):
     topic = message.text
 
     if topic in settings.ALGEBRA_TOPICS or topic in settings.GEOMETRY_TOPICS or topic in settings.PHYSICS_TOPICS:
-        
 
         bot.send_message(
             message.chat.id,
@@ -185,17 +184,17 @@ def search(message:types.Message, choice, topic):
     else:
         bot.send_message(
             message.chat.id,
-            text=messages.MESSAGE_ERROR_TWO,
+            text=messages.MESSAGE_403,
             reply_markup=markups.get_empty_markup()
         )
 
     bot.register_next_step_handler(message, search, choice, topic),
 
-@bot.message_handler(content_types = ["text"])
-def message_all(message: types.Message):
+@bot.message_handler(content_types=['text'])
+def message_all(message:types.Message):
     bot.send_message(
         chat_id = message.chat.id,
-        text = messages.MESSAGE_ALWAYS_CAME_BACK,
+        text = messages.MESSAGE_ALWAYS,
         reply_markup = markups.get_empty_markup()
     )
 

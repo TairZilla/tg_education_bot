@@ -26,7 +26,7 @@ ALGEBRA_TOPICS = [
 MANAGE_DICT = {
     "алгебра" : learning.ALGEBRA_DATA,
     "физика" : learning.PHYSICS_DATA,
-    "геометрия" : learning.GEOMETRY_DATA
+    "геометрия" : learning.GEOMITRY_DATA
 }
 
 GEOMETRY_TOPICS = [
