@@ -56,7 +56,7 @@ def admin_message(message:types.Message):
     else:
         bot.send_message(
             chat_id = message.chat.id,
-            text = 'Отказано в доступе',
+            text = messages.CANCEL_ID,
             reply_markup = markups.get_empty_markup()
         )
 
@@ -194,7 +194,7 @@ def search(message:types.Message, choice, topic):
 def message_all(message:types.Message):
     bot.send_message(
         chat_id = message.chat.id,
-        text = messages.MESSAGE_ALWAYS,
+        text = messages.MESSAGE_ALWAYS_CAME_BACK,
         reply_markup = markups.get_empty_markup()
     )
 
