@@ -164,12 +164,24 @@ def search(message:types.Message, choice, topic):
                 for part_path in item.split('|'):
                     data = data.get(part_path)
                 to_mes = data
-
-                bot.send_message(
-                    message.chat.id,
-                    text=to_mes,
-                    reply_markup=markups.get_empty_markup()
-                )
+                if '&graph&' in to_mes:
+                    
+                    bot.send_message(
+                        message.chat.id,
+                        text=to_mes.replace('&graph&', ''),
+                        reply_markup=markups.get_empty_markup()
+                    )
+                    with open ('../media/img/a.jpg', 'rb') as file:
+                        bot.send_photo(
+                            message.chat.id,
+                            photo=file
+                        )
+                else:
+                    bot.send_message(
+                        message.chat.id,
+                        text=to_mes,
+                        reply_markup=markups.get_empty_markup()
+                    )
         else:
             bot.send_message(
                 message.chat.id,
