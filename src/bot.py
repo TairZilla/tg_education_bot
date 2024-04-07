@@ -171,7 +171,7 @@ def search(message:types.Message, choice, topic):
                         text=to_mes.replace('&graph&', ''),
                         reply_markup=markups.get_empty_markup()
                     )
-                    with open ('/media/img/a.jpg', 'rb') as file:
+                    with open('./media/img/a.jpg', 'rb') as file:
                         bot.send_photo(
                             message.chat.id,
                             photo=file
